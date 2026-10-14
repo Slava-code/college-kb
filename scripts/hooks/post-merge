@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Versioned post-merge hook: after a pull, link raw/ domains that another machine
+# added to the shared raw store. Does nothing in local mode (no store configured).
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+STORE="${KB_RAW_STORE:-$(git config --get kb.rawstore 2>/dev/null || true)}"
+[ -n "$STORE" ] || exit 0
+if [ -x "$ROOT/scripts/link-raw.sh" ]; then
+  "$ROOT/scripts/link-raw.sh" | grep -v '^done (0 new' || true
+fi

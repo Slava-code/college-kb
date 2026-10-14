@@ -1,0 +1,42 @@
+{
+  "_comment": "Single machine-readable schema for this KB. Loaded by kb-lint.py, rebuild-indexes.py, wikilink-check.py and commit-msg-check.py (Python standard library only). AGENTS.md keeps human-readable copies of commit_scopes and commit_verbs; kb-lint.py fails if they drift. Templates for every type live in schema/templates/ (see its README). Pages under archive/ keep their original type and are not folder-checked. Optional modules (modules/<name>/README.md) tell you which types, path_types and scopes to add here when you install them.",
+  "valid_types": [
+    "course", "semester", "exam-prep", "course-notes", "profile",
+    "application-log", "plan", "person", "decision", "project", "source", "research",
+    "brainstorm", "list", "reminder", "report", "note", "drop"
+  ],
+  "path_types": {
+    "school": ["course", "semester", "exam-prep", "course-notes", "profile", "plan", "note"],
+    "career": ["profile", "application-log", "plan", "note"],
+    "projects": ["project", "plan", "note"],
+    "decisions": ["decision"],
+    "sources": ["source"],
+    "research": ["research"],
+    "brainstorms": ["brainstorm", "note"],
+    "people": ["person"],
+    "lists": ["list"],
+    "reminders": ["reminder"],
+    "inbox": ["drop"],
+    "runs": ["report", "note"]
+  },
+  "required_frontmatter": ["title", "type", "status", "description", "updated"],
+  "description_max_chars": 120,
+  "freeform_files": [
+    "README.md", "AGENTS.md", "CLAUDE.md", "CLAUDE.local.md", "INDEX.md",
+    "GLOSSARY.md", "THRESHOLDS.md", "LICENSE"
+  ],
+  "frontmatter_optional_dirs": ["inbox", "runs"],
+  "lint_skip_dirs": [".git", ".github", ".obsidian", ".claude", "raw", "schema", "modules", "docs"],
+  "index_skip_dirs": [".git", ".github", ".obsidian", ".claude", "raw", "inbox", "runs", "schema", "modules", "docs"],
+  "link_skip_dirs": [".git", ".github", ".claude", "raw", "schema", "modules"],
+  "commit_scopes": [
+    "inbox", "lists", "sources", "research", "raw", "reminders", "school", "career",
+    "decisions", "people", "projects", "brainstorms", "archive", "runs", "index",
+    "glossary", "schema", "scripts", "docs", "triage", "gardener"
+  ],
+  "commit_verbs": [
+    "add", "update", "process", "schedule", "complete", "archive", "supersede", "move", "fix",
+    "regen", "record", "seed"
+  ],
+  "commit_no_slug": ["index: regen"]
+}

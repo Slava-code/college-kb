@@ -1,0 +1,42 @@
+<!--
+Machine-local context template. Copy to CLAUDE.local.md (gitignored) on EACH
+machine that has a clone:  cp CLAUDE.local.md.example CLAUDE.local.md
+Agents read it before any write (AGENTS.md §Boot). Never commit the real file,
+and never copy a path from it into a committed page.
+-->
+# Machine-local context — not committed
+
+**Host:** `<output of hostname>`
+If `hostname` does not print exactly this, the file was copied from another
+machine: ignore every path below and ask before writing anything.
+
+## Role
+
+Writer. Pull first (`git pull --rebase`) before a session's first write; one
+writing session at a time across machines.
+
+## Absolute paths on THIS machine
+
+- this KB:            `<absolute path to this clone>`
+- raw store (opt.):   `<KB_RAW_STORE folder, or "local raw/ folders">`
+- sibling KB (opt.):  `<absolute path to a club/lab/startup KB, or delete this line>`
+
+## Modules enabled on this machine (optional)
+
+List each installed module and WHERE its machine-local config lives, never
+the values (no tokens, no passwords, no mailbox contents).
+
+- `<module name>`: `<config location, e.g. "~/.config/canvas/env (mode 600)">`
+- `<module name>`: `<e.g. "Thunderbird profile auto-detected" or an env var name>`
+
+## Course workspaces (optional)
+
+Local folders outside the repo that hold course files you do not commit
+(lecture slides, past exams, practice sets). Skills such as exam-prep read
+them in place and cite files by name.
+
+- `<COURSE CODE>`: `<absolute path to that course's local folder>`
+
+## Local quirks (optional)
+
+- `<anything an agent must know on this machine, e.g. which shell to use>`

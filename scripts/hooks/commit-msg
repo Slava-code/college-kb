@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Versioned commit-msg hook: checks `<scope>: <verb> <slug>` (warn-only unless KB_COMMIT_STRICT=1).
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+python3 "$ROOT/scripts/commit-msg-check.py" "$1"

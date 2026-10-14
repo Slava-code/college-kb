@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Versioned post-commit hook. Auto-push is OPT-IN: it runs only after
+#   git config kb.autopush true
+# and only when the current branch has an upstream.
+set -euo pipefail
+if [ "$(git config --bool --get kb.autopush 2>/dev/null || echo false)" != "true" ]; then
+  exit 0
+fi
+if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
+  git push --quiet || echo "WARNING: post-commit push failed; pull --rebase and resolve before the next write." >&2
+fi

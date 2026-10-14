@@ -1,0 +1,35 @@
+# OS / editor
+.DS_Store
+.obsidian/workspace*.json
+.obsidian/cache/
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets: values never live in the repo (secrets/README.md is a pointer map)
+.env
+.env.*
+*.pem
+*.key
+secrets/*
+!secrets/README.md
+
+# Raw artifacts live outside git (see raw/README.md); only the README and your
+# manifest are tracked in your private copy.
+raw/*
+!raw/README.md
+!raw/manifest.jsonl
+
+# Maintenance kill switch and single-writer lock are per-machine
+runs/PAUSE
+runs/.lock
+
+# Machine-local, never versioned (hostname, absolute paths, local settings)
+CLAUDE.local.md
+.claude/settings.local.json
+*.sqlite-wal
+*.sqlite-shm
+
+# Calendar exports (modules/reminders) are generated; write them outside the repo
+*.ics
