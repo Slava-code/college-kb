@@ -36,8 +36,9 @@ If a secret ever lands in a commit: rotate it first (the old value is burned), t
 Maybe you want to share a sanitized copy for a class, a club or a blog post. Run the leak gate first:
 
 1. Write your deny-list **outside the repo**, one extended regex per line: your full name and nicknames, student ID, school name and email domain, your email address, employers, professors, roommates, hometown, your machines' hostnames. Escape dots (`example\.edu`). Optionally list exemptions (such as your public GitHub handle) in `~/.config/college-kb/allowlist.txt`.
-2. `bash scripts/leak-gate.sh`. It scans every file git would publish, file names, commit messages and authors, and history, and fails on deny-list hits, raw files, `*.local*` files, home-directory paths, IP addresses and gitleaks findings. It prints `file:line [check]`, never the terms themselves.
+2. `bash scripts/leak-gate.sh`. It scans every file git would publish, file names, commit messages and authors, and every diff line in history (including files deleted since), and fails on deny-list hits, raw files, `*.local*` files, home-directory paths, IP addresses and gitleaks findings. Allowlisted text is cut out of a line before the deny-list is tested, so a deny term on the same line as your handle still fails. It prints `file:line [check]` (or commit ids for history), never the terms themselves.
 3. Fix every hit. If history contains private content, publish from a **fresh `git init`** of a cleaned export. Do not try to scrub history in place.
+4. **Commit timestamps carry your UTC offset**, which hints at where you live. The gate warns about non-UTC commits (`KB_REQUIRE_UTC=1` makes it fail). For a copy you will publish, commit with `TZ=UTC git commit ...` (or `alias gitc='TZ=UTC git commit'`), and when you build the fresh `git init` export, make its commits with `TZ=UTC` set.
 
 Never paste the deny-list into the repo, a commit message, a page, or an issue.
 

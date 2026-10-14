@@ -8,15 +8,21 @@
 #        ${KB_DENYLIST:-$HOME/.config/college-kb/denylist.txt}
 #      Put YOUR name, nicknames, student ID, school and its domains, employers,
 #      professors, roommates, home towns, hostnames and IP prefixes there.
-#      Lines that also match a regex in
+#      Text matching a regex in
 #        ${KB_ALLOWLIST:-$HOME/.config/college-kb/allowlist.txt}
-#      (e.g. your public GitHub handle) are exempt. Lines starting with # are
-#      comments. Keep both files OUTSIDE the repo; never commit them.
+#      (e.g. your public GitHub handle) is cut out of a line before the
+#      deny-list is tested, so a deny term next to an allowed one still fails.
+#      Lines starting with # are comments. Keep both files OUTSIDE the repo;
+#      never commit them. Checked in file contents, file names, commit
+#      messages and authors, and every diff line in git history.
 #   2. raw/ artifacts (anything under raw/ except raw/README.md)
 #   3. machine-local files (*.local*, except *.example templates)
 #   4. absolute home-directory paths (macOS/Linux/Windows), except placeholders
 #   5. IPv4 addresses (except loopback and the RFC 5737 documentation ranges)
 #   6. gitleaks findings (publishable tree + git history)
+# It also warns (fails with KB_REQUIRE_UTC=1) when a commit carries a
+# non-UTC timezone offset, which hints at where you live. Commit with
+# TZ=UTC to avoid it (see docs/privacy.md).
 #
 # Hits print as file:line and the check name, never the deny-list terms
 # themselves, so the output is safe to paste into an issue or CI log.
@@ -45,8 +51,17 @@ else
 fi
 [ -f "$ALLOW" ] && { grep -vE '^[[:space:]]*(#|$)' "$ALLOW" > "$TMP/allow" || true; }
 
-allowed() {  # stdin: one line of text; true if an allowlist regex matches it
-  [ -s "$TMP/allow" ] && grep -qiE -f "$TMP/allow"
+strip_allowed() {  # $1: one line of text; prints it with every allowlist match blanked out
+  local l="$1" m
+  if [ -s "$TMP/allow" ]; then
+    while IFS= read -r m; do
+      [ -n "$m" ] && l="${l//"$m"/ }"
+    done < <(printf '%s\n' "$l" | grep -oiE -f "$TMP/allow" || true)
+  fi
+  printf '%s\n' "$l"
+}
+denied() {  # $1: one line of text; true if a deny regex matches what the allowlist leaves
+  [ -s "$TMP/deny" ] && strip_allowed "$1" | grep -qiE -f "$TMP/deny"
 }
 
 # [U] keeps this script from matching its own pattern (and common deny-lists).
@@ -70,13 +85,12 @@ while IFS= read -r -d '' f; do
     *.example) ;;
     *.local*) hit "$f" "machine-local file" ;;
   esac
-  if [ -s "$TMP/deny" ] && printf '%s\n' "$f" | grep -qiE -f "$TMP/deny" \
-     && ! printf '%s\n' "$f" | allowed; then
+  if denied "$f"; then
     hit "$f" "deny-list (file name)"
   fi
   if [ -s "$TMP/deny" ]; then
     { grep -nIiE -f "$TMP/deny" -- "$f" || true; } | while IFS= read -r line; do
-      printf '%s\n' "${line#*:}" | allowed && continue
+      denied "${line#*:}" || continue
       printf '  %s:%s  [deny-list]\n' "$f" "${line%%:*}"
     done >> "$TMP/deny-hits"
   fi
@@ -98,12 +112,37 @@ for h in "$TMP/deny-hits" "$TMP/generic-hits"; do
   fi
 done
 
-# Commit messages and author identities in history.
+# History: commit messages, author identities, every diff line (including
+# files deleted later), and commit timezones. Reports counts and commit ids only.
 if git rev-parse --verify -q HEAD >/dev/null; then
   if [ -s "$TMP/deny" ]; then
     git log --all --format='%H %an <%ae> %cn <%ce>%n%B' > "$TMP/log"
-    n="$(grep -iE -f "$TMP/deny" "$TMP/log" | { if [ -s "$TMP/allow" ]; then grep -viE -f "$TMP/allow"; else cat; fi; } | wc -l | tr -d ' ' || true)"
-    [ "${n:-0}" -eq 0 ] || hit "git log ($n line(s))" "deny-list (commit messages/authors)"
+    n=0
+    while IFS= read -r line; do
+      denied "$line" && n=$((n+1))
+    done < <(grep -iE -f "$TMP/deny" "$TMP/log" || true)
+    [ "$n" -eq 0 ] || hit "git log ($n line(s))" "deny-list (commit messages/authors)"
+
+    git log -p --all --no-color --no-ext-diff --format='@@kb-commit %h' \
+      | awk '/^@@kb-commit /{c=$2; next} {print c "\t" $0}' > "$TMP/hist"
+    : > "$TMP/hist-hits"
+    while IFS= read -r line; do
+      denied "${line#*$'\t'}" && printf '%s\n' "${line%%$'\t'*}" >> "$TMP/hist-hits"
+    done < <(grep -iE -f "$TMP/deny" "$TMP/hist" || true)
+    if [ -s "$TMP/hist-hits" ]; then
+      n="$(wc -l < "$TMP/hist-hits" | tr -d ' ')"
+      commits="$(sort -u "$TMP/hist-hits" | tr '\n' ' ')"
+      hit "git history diffs ($n line(s) in: ${commits% })" "deny-list (history content)"
+    fi
+  fi
+  tz="$(git log --all --format='%h %ad %cd' --date=format:%z | awk '$2!="+0000" || $3!="+0000" {print $1}' | sort -u)"
+  if [ -n "$tz" ]; then
+    ntz="$(printf '%s\n' "$tz" | wc -l | tr -d ' ')"
+    if [ "${KB_REQUIRE_UTC:-0}" = "1" ]; then
+      hit "git history ($ntz commit(s) with a non-UTC offset)" "commit timezone"
+    else
+      echo "WARNING: $ntz commit(s) carry a non-UTC timezone offset (a location hint). Rewrite them in UTC before publishing; see docs/privacy.md." >&2
+    fi
   fi
 fi
 

@@ -46,8 +46,8 @@ Your KB repo should stay private. If you ever publish a copy (a template, a samp
    employers, professors, roommates, hometown
    your machine's hostname
    ```
-   Optional allowlist (lines matching it are exempt), e.g. your public GitHub handle: `~/.config/college-kb/allowlist.txt`. Override the locations with `KB_DENYLIST` and `KB_ALLOWLIST`.
-2. `bash scripts/leak-gate.sh`. It scans everything git would publish, file names, commit messages and history, and fails on deny-list hits, `raw/` files (including your manifest), `*.local*` files, absolute home paths, IPv4 addresses, and gitleaks findings. It prints `file:line [check]`, never the deny-list terms, so the output is safe to share.
+   Optional allowlist (matching text is cut out of a line before the deny-list is tested, so only that text is exempt), e.g. your public GitHub handle: `~/.config/college-kb/allowlist.txt`. Override the locations with `KB_DENYLIST` and `KB_ALLOWLIST`.
+2. `bash scripts/leak-gate.sh`. It scans everything git would publish, file names, commit messages and authors, and every diff line in history, and fails on deny-list hits, `raw/` files (including your manifest), `*.local*` files, absolute home paths, IPv4 addresses, and gitleaks findings. It prints `file:line [check]` (commit ids for history), never the deny-list terms, so the output is safe to share. It also warns about commits with a non-UTC timezone offset (`KB_REQUIRE_UTC=1` makes that a failure); commit a publishable copy with `TZ=UTC`.
 3. Fix every hit. If history is dirty, publish from a fresh `git init` of a cleaned export instead of rewriting history.
 
 CI (`.github/workflows/leak-gate.yml`) runs gitleaks and `kb-lint.py` on every push and pull request; it cannot see your private deny-list, so the local gate is still required.
