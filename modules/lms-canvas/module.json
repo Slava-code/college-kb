@@ -1,0 +1,11 @@
+{
+  "name": "lms-canvas",
+  "summary": "Read Canvas LMS from the shell: GET-only curl wrapper, what's-due sweep, canvas skill.",
+  "schema_additions": {},
+  "next_steps": [
+    "Create ~/.config/canvas/env (mode 600) with CANVAS_BASE_URL and CANVAS_TOKEN; see modules/lms-canvas/README.md#get-a-token",
+    "Add a pointer entry for the token in secrets/README.md (never the value)",
+    "Check: scripts/canvas.sh whoami",
+    "Rewrite or delete the DEMO page school/lms-canvas.md"
+  ]
+}

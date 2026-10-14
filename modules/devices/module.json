@@ -1,0 +1,14 @@
+{
+  "name": "devices",
+  "summary": "Machine pages (specs, coursework toolchain, backups, history) and incident write-ups.",
+  "schema_additions": {
+    "valid_types": ["device", "incident"],
+    "path_types": {"devices": ["device", "incident", "note"]},
+    "commit_scopes": ["devices"]
+  },
+  "next_steps": [
+    "Apply the schema additions to scripts/kb-schema.json and add 'devices' to AGENTS.md 'Allowed scopes'",
+    "Add each machine to GLOSSARY.md (Things)",
+    "Rewrite or delete the DEMO pages in devices/"
+  ]
+}

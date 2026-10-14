@@ -1,0 +1,9 @@
+{
+  "name": "sibling-kb",
+  "summary": "Route between this KB and a club/lab/startup KB: prefixes, never-mix rule, cross-KB writes.",
+  "schema_additions": {},
+  "next_steps": [
+    "Fill the sibling KB line (path, name, prefix) in each machine's CLAUDE.local.md",
+    "Add one GLOSSARY.md entry for the sibling KB"
+  ]
+}

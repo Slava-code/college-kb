@@ -1,0 +1,15 @@
+{
+  "name": "international-student",
+  "summary": "Status document pages by class, key dates, guidance reference, advising-email records. Not legal advice.",
+  "schema_additions": {
+    "valid_types": ["document"],
+    "path_types": {"international": ["document", "note"]},
+    "commit_scopes": ["international"]
+  },
+  "next_steps": [
+    "Apply the schema additions to scripts/kb-schema.json and add 'international' to AGENTS.md 'Allowed scopes'",
+    "bash scripts/link-raw.sh international",
+    "Add your international office to GLOSSARY.md",
+    "Rewrite or delete the DEMO pages in international/"
+  ]
+}

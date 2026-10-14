@@ -1,0 +1,13 @@
+{
+  "name": "trips",
+  "summary": "Trip planning silos: one page per trip, entity pages never absorb trip content.",
+  "schema_additions": {
+    "valid_types": ["trip"],
+    "path_types": {"trips": ["trip", "note"]},
+    "commit_scopes": ["trips"]
+  },
+  "next_steps": [
+    "Apply the schema additions to scripts/kb-schema.json and add 'trips' to AGENTS.md 'Allowed scopes'",
+    "Rewrite or delete the DEMO page in trips/"
+  ]
+}

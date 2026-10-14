@@ -1,0 +1,11 @@
+{
+  "name": "school-mail",
+  "summary": "Read-only school mailbox access via Thunderbird's local offline copy (Outlook/M365, Gmail, IMAP).",
+  "schema_additions": {},
+  "next_steps": [
+    "Check your school's IT acceptable-use policy",
+    "Set up Thunderbird with offline sync; see modules/school-mail/README.md#thunderbird-setup",
+    "Check: python3 -I scripts/school-mail.py status",
+    "Rewrite or delete the DEMO page school/school-mail-bridge.md"
+  ]
+}

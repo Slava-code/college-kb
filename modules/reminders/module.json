@@ -1,0 +1,10 @@
+{
+  "name": "reminders",
+  "summary": "Reminders skill + .ics calendar export on top of the core reminders/ ledger and checker.",
+  "schema_additions": {},
+  "next_steps": [
+    "Set REMINDER_TIMEZONE in THRESHOLDS.md",
+    "Check: python3 scripts/reminder-ledger-check.py",
+    "Delete the DEMO ledger reminders/2099.md once you have a real year file"
+  ]
+}
