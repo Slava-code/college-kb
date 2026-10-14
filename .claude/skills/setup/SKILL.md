@@ -29,7 +29,7 @@ Ask in a single message, then wait:
 5. Timezone (IANA name, e.g. `America/New_York`).
 6. This machine's role (main laptop, desktop, lab machine) and whether another clone exists.
 7. Where raw files should live: local `raw/` folders (default) or a folder their sync client already backs up.
-8. Which optional modules to enable: list them with `ls modules/` and read each `modules/<name>/README.md` summary line (for example an LMS module, the school-mail bridge, an international-student module).
+8. Which optional modules to enable: list them with `bash modules/install.sh --list` (one line per module: name and summary), then open `modules/<name>/README.md` for any that sound useful (for example an LMS module, the school-mail bridge, an international-student module).
 9. Auto-push after every commit? Default **no**.
 
 Do not ask for student ID numbers, government ID numbers, passwords or tokens. If they volunteer a secret, do not write it anywhere; point them to `kb-secrets`.

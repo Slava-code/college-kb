@@ -62,5 +62,5 @@ A general "what's due" question belongs to the core `whats-due` skill: it merges
 
 ## 6. Never
 
-- Never submit assignments, take quizzes, post discussion replies, send Canvas messages, or change settings. `scripts/canvas.sh` is GET-only by design. If the student asks for help with a submission, draft it for them to submit; if they explicitly want an API write, show the exact request and get a yes first.
+- Never submit assignments, take quizzes, post discussion replies, send Canvas messages, or change settings. `scripts/canvas.sh` is GET-only by design. If the student asks for help with a submission, you may check the assignment's requirements (format, file type, length, due time, submission type) against what they have and help them package **their own** finished work for upload; they upload it themselves. Never draft or complete graded content, and follow the course's AI policy on the course page. If they explicitly want an API write, show the exact request and get a yes first.
 - Never use Canvas access to do graded work against the course's AI policy (recorded on the course page).
