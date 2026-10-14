@@ -3,13 +3,30 @@
 
 Never edit INDEX.md by hand: edit the page's `description:` and re-run this
 (the pre-commit hook does it for you and stages the result).
+
+Usage: rebuild-indexes.py [--root DIR]   (DIR defaults to this repo; the
+pre-commit hook passes an export of the staged tree, so the committed
+INDEX.md lists only pages that are part of the commit)
 """
 from __future__ import annotations
-import json, re
+import json, re, sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = json.loads((ROOT / 'scripts' / 'kb-schema.json').read_text(encoding='utf-8'))
+
+def _root_from_argv() -> Path:
+    """`--root DIR` points the script at another checkout of the KB, such as the
+    staged tree the pre-commit hook exports; the default is this repo."""
+    argv = sys.argv[1:]
+    for i, a in enumerate(argv):
+        if a == '--root' and i + 1 < len(argv):
+            return Path(argv[i + 1]).resolve()
+        if a.startswith('--root='):
+            return Path(a.split('=', 1)[1]).resolve()
+    return Path(__file__).resolve().parents[1]
+
+
+ROOT = _root_from_argv()
+SCHEMA = json.loads((Path(__file__).resolve().parent / 'kb-schema.json').read_text(encoding='utf-8'))
 SKIP_DIRS = set(SCHEMA['index_skip_dirs'])
 ROOT_SKIP = set(SCHEMA['freeform_files'])
 FM_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.S)

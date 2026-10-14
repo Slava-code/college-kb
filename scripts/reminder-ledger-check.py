@@ -6,12 +6,28 @@ Each bullet (`- ...`) must carry `status:` and `scheduler_ref:`:
   status: needs-clarification  scheduler_ref: none   (+ reason: for ambiguous recurrence)
   status: scheduled            scheduler_ref: <id>   (calendar event id, routine id, ...)
   status: sent | completed | cancelled
+
+Usage: reminder-ledger-check.py [--root DIR]   (DIR defaults to this repo; the
+pre-commit hook passes an export of the staged tree)
 """
 from __future__ import annotations
 import re, sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+
+def _root_from_argv() -> Path:
+    """`--root DIR` points the script at another checkout of the KB, such as the
+    staged tree the pre-commit hook exports; the default is this repo."""
+    argv = sys.argv[1:]
+    for i, a in enumerate(argv):
+        if a == '--root' and i + 1 < len(argv):
+            return Path(argv[i + 1]).resolve()
+        if a.startswith('--root='):
+            return Path(a.split('=', 1)[1]).resolve()
+    return Path(__file__).resolve().parents[1]
+
+
+ROOT = _root_from_argv()
 VALID = {'proposed-only', 'scheduled', 'sent', 'completed', 'cancelled', 'needs-clarification'}
 STATUS_RE = re.compile(r'\bstatus:\s*([A-Za-z-]+)')
 REF_RE = re.compile(r'\bscheduler_ref:\s*([^·\n]+)')

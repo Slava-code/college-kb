@@ -5,13 +5,17 @@ Usage:
   python3 scripts/kb-lint.py            # lint every page
   python3 scripts/kb-lint.py --staged   # lint only staged .md files (pre-commit hook)
   python3 scripts/kb-lint.py PATH...    # lint the given repo-relative paths
+  --root DIR                            # read pages from DIR instead of the repo
+                                        # (the pre-commit hook passes an export
+                                        # of the staged tree)
 """
 from __future__ import annotations
 import argparse, datetime, json, re, subprocess, sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = json.loads((ROOT / 'scripts' / 'kb-schema.json').read_text(encoding='utf-8'))
+REPO = Path(__file__).resolve().parents[1]
+ROOT = REPO  # where pages are read from; --root changes it
+SCHEMA = json.loads((REPO / 'scripts' / 'kb-schema.json').read_text(encoding='utf-8'))
 REQUIRED = set(SCHEMA['required_frontmatter'])
 VALID_TYPES = set(SCHEMA['valid_types'])
 DESC_MAX = int(SCHEMA.get('description_max_chars', 120))
@@ -25,7 +29,7 @@ DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 
 def staged_files() -> list[str]:
     out = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACMR'],
-                                  cwd=ROOT, text=True)
+                                  cwd=REPO, text=True)
     return [x for x in out.splitlines() if x.endswith('.md')]
 
 
@@ -120,8 +124,12 @@ def schema_drift() -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--staged', action='store_true', help='lint only staged .md files')
+    ap.add_argument('--root', help='read pages from this directory instead of the repo')
     ap.add_argument('files', nargs='*')
     args = ap.parse_args()
+    global ROOT
+    if args.root:
+        ROOT = Path(args.root).resolve()
     if args.staged:
         files = staged_files()
     else:

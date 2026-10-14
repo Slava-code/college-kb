@@ -2,8 +2,9 @@
 # install-hooks.sh — point git at the versioned hooks in scripts/hooks/.
 #
 # Hooks are tracked files, so `git pull` updates them; run this once per clone.
-#   pre-commit  gitleaks staged scan, INDEX.md rebuild + stage, kb-lint,
-#               reminder ledger check, warn-only wikilink check
+#   pre-commit  gitleaks staged scan, then (on an export of the staged tree)
+#               INDEX.md rebuild + stage, kb-lint, reminder ledger check,
+#               warn-only wikilink check
 #   commit-msg  commit subject format check (warn-only unless KB_COMMIT_STRICT=1)
 #   post-commit push, ONLY if you opted in: git config kb.autopush true
 #   post-merge  re-link raw/ domains after a pull, only when a raw store is set

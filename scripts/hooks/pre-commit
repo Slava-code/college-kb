@@ -19,10 +19,20 @@ else
   gitleaks git --staged --redact --no-banner --log-level warn -v --config "$ROOT/.gitleaks.toml"
 fi
 
-python3 scripts/rebuild-indexes.py >/dev/null
-git add INDEX.md
-python3 scripts/kb-lint.py --staged
-python3 scripts/reminder-ledger-check.py >/dev/null
-if ! python3 scripts/wikilink-check.py >/dev/null; then
-  echo "WARNING: wikilink-check found missing targets (warning only; run python3 scripts/wikilink-check.py)." >&2
+# Check what is being committed, not the working tree: export the staged tree
+# (the index git commits from; it honours GIT_INDEX_FILE, so `git commit -- <path>`
+# works too). Untracked or unstaged pages never reach INDEX.md or the checks.
+STAGED="$(mktemp -d "${TMPDIR:-/tmp}/kb-staged.XXXXXX")"
+trap 'rm -rf "$STAGED"' EXIT
+git checkout-index -a -f --prefix="$STAGED/"
+
+python3 scripts/rebuild-indexes.py --root "$STAGED" >/dev/null
+if ! git show :INDEX.md 2>/dev/null | cmp -s - "$STAGED/INDEX.md"; then
+  cp "$STAGED/INDEX.md" INDEX.md
+  git add INDEX.md
+fi
+python3 scripts/kb-lint.py --staged --root "$STAGED"
+python3 scripts/reminder-ledger-check.py --root "$STAGED" >/dev/null
+if ! python3 scripts/wikilink-check.py --root "$STAGED" >/dev/null; then
+  echo "WARNING: wikilink-check found missing targets in the staged tree (warning only; run python3 scripts/wikilink-check.py)." >&2
 fi
