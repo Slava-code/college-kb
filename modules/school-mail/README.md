@@ -50,7 +50,7 @@ A common fallback, where policy allows it: a server-side rule that forwards a co
    The store format applies only to accounts created after it is set. The script also reads Thunderbird's default **mbox** format, so an existing account works without changes.
 3. **Add your school account** as IMAP and sign in through the school SSO page that opens. For Microsoft 365 the server is usually `outlook.office365.com`. You don't have to make Thunderbird your default mail app, and you can keep using your usual client.
 4. **Turn on offline sync for every folder you want readable.** Account Settings → Synchronization & Storage → keep messages on this computer. For folders other than the inbox: right-click → Subscribe, then folder Properties → Synchronization → select for offline use. Then File → Offline → Download/Sync Now. A large mailbox takes a while and can use several GB of disk.
-5. **Keep Thunderbird running** (add it as a login item) so the copy stays current. `status` tells you whether it is running and when the newest message landed.
+5. **Keep Thunderbird running** (add it as a login item) so the copy stays current. `status` tells you whether a Thunderbird process is running (a host-wide check: with several profiles it cannot tell which one is open) and when the newest message landed in the configured store.
 
 ## Configuration
 

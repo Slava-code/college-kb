@@ -430,7 +430,8 @@ def cmd_status(a):
             mbox_bytes += st.st_size
             newest = st.st_mtime if newest is None or st.st_mtime > newest else newest
     print(f"store: {root}")
-    print(f"thunderbird running: {thunderbird_running()}")
+    # A host-wide process check: it cannot tell which profile or store is open.
+    print(f"thunderbird process running (any profile): {thunderbird_running()}")
     kinds = sorted({k for k, _ in fm.values()})
     print(f"folders: {len(fm)} ({'/'.join(kinds) or 'none'})")
     if maildir_total:
