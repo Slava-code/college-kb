@@ -17,7 +17,7 @@ Small, boring scripts: capture, index rebuild, lint, link and ledger checks, hoo
 | Script | Purpose | Run by |
 |---|---|---|
 | `kb-schema.json` | The one schema config: valid `type:` values, folder→type map, required frontmatter, skip lists, commit scopes/verbs. Edit here when adding a type, folder, or scope; scope/verb changes also go in AGENTS.md §Commit format. | loaded by every Python script |
-| `kb-lint.py` | Frontmatter lint (required keys, valid type, folder/type match, `updated:` date, description length) plus a drift check that AGENTS.md scope/verb lists match `kb-schema.json`. `--staged` lints only staged files. | pre-commit, CI, manual |
+| `kb-lint.py` | Frontmatter lint (required keys, valid type, folder/type match, `updated:` is a real YYYY-MM-DD date, description length) plus a drift check that AGENTS.md scope/verb lists match `kb-schema.json`. `--staged` lints only staged files. | pre-commit, CI, manual |
 | `rebuild-indexes.py` | Regenerates root `INDEX.md` from `description:` frontmatter. Never edit `INDEX.md` by hand. | pre-commit (then stages `INDEX.md`) |
 | `wikilink-check.py` | Reports `[[wikilinks]]` whose target does not exist. | pre-commit (warning only), manual |
 | `commit-msg-check.py` | Checks `<scope>: <verb> <slug>`. Warning-only unless `KB_COMMIT_STRICT=1`. | commit-msg hook |

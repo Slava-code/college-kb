@@ -7,7 +7,7 @@ Usage:
   python3 scripts/kb-lint.py PATH...    # lint the given repo-relative paths
 """
 from __future__ import annotations
-import argparse, json, re, subprocess, sys
+import argparse, datetime, json, re, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -27,6 +27,17 @@ def staged_files() -> list[str]:
     out = subprocess.check_output(['git', 'diff', '--cached', '--name-only', '--diff-filter=ACMR'],
                                   cwd=ROOT, text=True)
     return [x for x in out.splitlines() if x.endswith('.md')]
+
+
+def valid_date(s: str) -> bool:
+    """YYYY-MM-DD and a real calendar date (rejects 2099-13-40)."""
+    if not DATE_RE.match(s):
+        return False
+    try:
+        datetime.datetime.strptime(s, '%Y-%m-%d')
+    except ValueError:
+        return False
+    return True
 
 
 def parse_fm(text: str) -> dict[str, str]:
@@ -68,8 +79,8 @@ def lint_path(rel_s: str) -> list[str]:
     if len(desc) > DESC_MAX:
         errs.append(f'description too long: {len(desc)} > {DESC_MAX}')
     upd = fm.get('updated')
-    if upd and not DATE_RE.match(upd):
-        errs.append(f'updated must be YYYY-MM-DD: {upd}')
+    if upd and not valid_date(upd):
+        errs.append(f'updated must be a real date in YYYY-MM-DD form: {upd}')
     folder = rel.parts[0] if len(rel.parts) > 1 else ''
     allowed = PATH_TYPE.get(folder)
     if allowed and typ and typ not in allowed:
