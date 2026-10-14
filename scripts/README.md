@@ -22,7 +22,7 @@ Small, boring scripts: capture, index rebuild, lint, link and ledger checks, hoo
 | `wikilink-check.py` | Reports `[[wikilinks]]` whose target does not exist. | pre-commit (warning only), manual |
 | `commit-msg-check.py` | Checks `<scope>: <verb> <slug>`. Warning-only unless `KB_COMMIT_STRICT=1`. | commit-msg hook |
 | `reminder-ledger-check.py` | Validates `reminders/*.md` bullets: `status:` value, `scheduler_ref:` consistency, `reason:` on ambiguous recurrence. | pre-commit, manual |
-| `kbdrop.sh` | Fast capture: writes a verbatim `inbox/YYYY-MM-DD-HHMM-<slug>.md` and commits `inbox: add ...`. `kbdrop.sh -` reads stdin. | capture skill, your shell alias |
+| `kbdrop.sh` | Fast capture: writes a verbatim `inbox/YYYY-MM-DD-HHMM-<slug>.md` and commits only that file as `inbox: add ...` (other staged changes stay staged). `kbdrop.sh -` reads stdin. Text gitleaks flags as a secret is refused before anything is written; if the commit is refused anyway, the drop is unstaged, renamed to a neutral `...-unsaved-drop.md` and the recovery steps are printed. | capture skill, your shell alias |
 | `link-raw.sh` | `link-raw.sh <domain>` adds a raw/ domain (local folder, or store folder plus symlink when `KB_RAW_STORE` is set); bare run links every store domain. | post-merge hook, manual |
 | `install-hooks.sh` | Points git at `scripts/hooks/` and reports gitleaks and auto-push status. | once per clone |
 | `hooks/pre-commit` | gitleaks staged scan (`KB_SKIP_GITLEAKS=1` to bypass once), INDEX rebuild + stage, kb-lint, reminder check, warn-only wikilink check. | git |
